@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 
-import static org.atmosdbtask.DBConnect.getRecordsBetweenInt;
 
 public class AbsDataCreation {
     private static String jdbcUrl = "jdbc:sqlite:task.db";
@@ -16,7 +15,7 @@ public class AbsDataCreation {
         String dataBaseName = "task";
         createNewDatabase(dataBaseName);
         String jdbcUrl = String.format("jdbc:sqlite:%s.db",dataBaseName);
-        createAbsTable("abs");
+        createAbsTable();
         insertDataIntoTable();
 
         {
@@ -42,7 +41,6 @@ public class AbsDataCreation {
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("The driver name is " + meta.getDriverName());
                 System.out.println("A new database has been created.");
             }
         } catch (SQLException e) {
@@ -50,12 +48,12 @@ public class AbsDataCreation {
         }
     }
 
-    private static void createAbsTable(String tableName){
+    private static void createAbsTable(){
         String sql = "CREATE TABLE abs(\"id\" integer, \"module\" text, \"time\" int, \"press\" real, \"temp\" real, \"alt\" real);";
         try (Connection conn = DriverManager.getConnection(jdbcUrl);
              Statement stmt = conn.createStatement()) {
-            // create a new table
             stmt.execute(sql);
+            System.out.println("Table is created");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
