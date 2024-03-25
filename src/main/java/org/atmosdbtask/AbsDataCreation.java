@@ -10,10 +10,10 @@ import java.sql.*;
 import static org.atmosdbtask.DBConnect.getRecordsBetweenInt;
 
 public class AbsDataCreation {
-    private static String jdbcUrl = "jdbc:sqlite:atmos.db";
+    private static String jdbcUrl = "jdbc:sqlite:task.db";
     public static void main(String[] args) throws SQLException, IOException {
         Connection connection;
-        String dataBaseName = "atmos";
+        String dataBaseName = "task";
         createNewDatabase(dataBaseName);
         String jdbcUrl = String.format("jdbc:sqlite:%s.db",dataBaseName);
         createAbsTable("abs");
@@ -37,7 +37,6 @@ public class AbsDataCreation {
         }
     }
     private static void createNewDatabase(String fileName) {
-
         String url = "jdbc:sqlite:" + fileName;
 
         try (Connection conn = DriverManager.getConnection(url)) {
@@ -46,7 +45,6 @@ public class AbsDataCreation {
                 System.out.println("The driver name is " + meta.getDriverName());
                 System.out.println("A new database has been created.");
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -84,5 +82,17 @@ public class AbsDataCreation {
             preparedStatement.executeUpdate();
         }
         br.close();
+    }
+
+    private static String getDataForModule(String moduleValue) {
+        return String.format("SELECT * FROM abs WHERE module='%s'", moduleValue);
+    }
+
+    public static String getRecordsBetweenInt(String field, int fromTime, int toTime) {
+        return String.format("SELECT * FROM abs WHERE %s between %d and %d ", field, fromTime, toTime);
+    }
+
+    private static String getRecordsBetweenReal(String field, double from, double to) {
+        return String.format("SELECT * FROM abs WHERE %s between %d and %d ", field, from, to);
     }
 }
